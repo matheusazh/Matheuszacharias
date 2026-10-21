@@ -19,9 +19,13 @@ enum Toolchain {
     static var bundledBin: URL? { existing(resources?.appending(path: "bin")) }
 
     /// Raiz do repositório quando rodando do código-fonte.
-    static let sourceRoot: URL = URL(fileURLWithPath: #filePath)
-        .deletingLastPathComponent().deletingLastPathComponent()
-        .deletingLastPathComponent().deletingLastPathComponent()
+    /// O app de teste fica em <repo>/build/SplitterCRTV.app; via `swift run`, vale a pasta atual.
+    /// (Sem #filePath, para não gravar o caminho da máquina no binário.)
+    static let sourceRoot: URL = {
+        let fromBundle = Bundle.main.bundleURL.deletingLastPathComponent().deletingLastPathComponent()
+        if FileManager.default.fileExists(atPath: fromBundle.appending(path: "engine").path) { return fromBundle }
+        return URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+    }()
 
     static var isBundled: Bool { bundledPython != nil }
 
