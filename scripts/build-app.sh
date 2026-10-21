@@ -23,6 +23,7 @@ swift build -c release
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp .build/release/SplitterCRTV "$APP/Contents/MacOS/SplitterCRTV"
+(( DEV )) || strip -S "$APP/Contents/MacOS/SplitterCRTV"  # tira caminhos de debug do binário
 
 if [[ $DEV == 0 ]]; then
   # Ferramentas (scripts/fetch-tools.sh): ffmpeg, ffprobe, yt-dlp, deno — mantêm a assinatura dos autores.
@@ -38,7 +39,18 @@ if [[ $DEV == 0 ]]; then
     mkdir -p "$APP/Contents/Resources/engine"
     ditto engine/splitter_engine "$APP/Contents/Resources/engine/splitter_engine"
     find "$APP/Contents/Resources/engine" -name "__pycache__" -type d -prune -exec rm -rf {} +
-    "$APP/Contents/Resources/python/bin/python3" -m compileall -q -j0 "$APP/Contents/Resources/engine" >/dev/null
+    # Sem caminhos da máquina de build: shebangs dos scripts do pip e .pyc gerados em execuções locais
+    PYDIR="$APP/Contents/Resources/python"
+    find "$PYDIR" -name "__pycache__" -type d -prune -exec rm -rf {} +
+    for f in "$PYDIR"/bin/*(.N); do
+      if head -c 2 "$f" | grep -q '#!' && head -1 "$f" | grep -q "$PWD"; then
+        sed -i '' '1s|.*|#!/usr/bin/env python3|' "$f"
+      fi
+    done
+    sed -i '' "s|$PWD/vendor/[^'\" ]*|/python|g" "$PYDIR"/lib/python3.12/_sysconfigdata_*.py
+    grep -rlaF "$HOME" "$PYDIR/lib" --include="*.so" | while read -r so; do strip -x -S "$so" 2>/dev/null; done
+    "$PYDIR/bin/python3" -m compileall -q -j0 -s "$PYDIR" -p /python "$PYDIR/lib" >/dev/null || true
+    "$PYDIR/bin/python3" -m compileall -q -j0 -s "$APP/Contents/Resources" -p / "$APP/Contents/Resources/engine" >/dev/null
   else
     echo "Aviso: vendor/python ausente (rode scripts/build-engine.sh)"
   fi
