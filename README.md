@@ -3,7 +3,14 @@
 App nativo macOS (SwiftUI + Liquid Glass) para separar voz e instrumentos de músicas (estilo Moises)
 e limpar a voz de falas, pregações e vídeos (estilo Adobe Podcast). A IA roda toda no Mac, sem internet.
 
-## Instalar no seu Mac
+## Baixar (jeito fácil)
+
+Baixe o `.dmg` em **[Releases](https://github.com/noahcrtv1/SplitterCRTV/releases/latest)**, abra e arraste o SplitterCRTV para Aplicativos.
+Na primeira abertura, se o macOS bloquear: **Ajustes do Sistema ▸ Privacidade e Segurança ▸ Abrir Mesmo Assim**.
+
+Quer compilar você mesmo? Siga a seção abaixo.
+
+## Compilar no seu Mac
 
 Precisa de um Mac com Apple Silicon (M1 ou mais novo) e macOS 26 ou mais novo.
 
