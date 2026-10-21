@@ -3,6 +3,33 @@
 App nativo macOS (SwiftUI + Liquid Glass) para separar voz e instrumentos de músicas (estilo Moises)
 e limpar a voz de falas, pregações e vídeos (estilo Adobe Podcast). A IA roda toda no Mac, sem internet.
 
+## Instalar no seu Mac
+
+Precisa de um Mac com Apple Silicon (M1 ou mais novo) e macOS 26 ou mais novo.
+
+1. Instale o **Xcode** pela App Store (grátis), abra uma vez e aceite a licença.
+   Ele traz o compilador Swift e a ferramenta que gera o ícone.
+   Também instale o **uv** (gerenciador de Python): `curl -LsSf https://astral.sh/uv/install.sh | sh`
+   e feche/abra o Terminal.
+   Reserve ~15 GB livres e uma boa internet: os modelos de IA são grandes.
+2. Abra o app **Terminal** e rode:
+
+```bash
+git clone https://github.com/noahcrtv1/SplitterCRTV.git
+cd SplitterCRTV
+scripts/fetch-tools.sh          # yt-dlp, deno e ffmpeg
+scripts/build-engine.sh         # Python embutido + dependências do motor
+scripts/fetch-models.sh         # modelos de IA (vários GB, demora)
+scripts/build-app.sh --install  # compila e instala em /Applications
+```
+
+O app aparece em **Aplicativos** como SplitterCRTV. 16 GB de memória recomendados.
+
+3. Na primeira vez que abrir, o macOS pode bloquear (o app não é assinado pela Apple).
+   Vá em **Ajustes do Sistema ▸ Privacidade e Segurança** e clique em **Abrir Mesmo Assim**.
+
+Para atualizar depois: `cd SplitterCRTV && git pull` e rode o último comando de novo.
+
 ## Requisitos
 - macOS 26+ (testado no 27.2), Apple Silicon. 16 GB de memória recomendados.
 - Para compilar: Xcode 27 (actool para o ícone do Icon Composer), `uv` e Homebrew opcionais.
