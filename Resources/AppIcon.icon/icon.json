@@ -1,0 +1,61 @@
+{
+  "fill": {
+    "solid": "extended-srgb:0.00000,0.00000,0.00000,1.00000"
+  },
+  "groups": [
+    {
+      "layers": [
+        {
+          "glass": true,
+          "image-name": "arrow.svg",
+          "name": "arrow"
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.5
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.3
+      }
+    },
+    {
+      "layers": [
+        {
+          "glass": true,
+          "image-name": "tv.svg",
+          "name": "tv"
+        },
+        {
+          "glass": true,
+          "image-name": "screen.svg",
+          "name": "screen",
+          "opacity": 0.28
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.5
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.4
+      }
+    },
+    {
+      "layers": [
+        {
+          "glass": false,
+          "image-name": "background.svg",
+          "name": "background"
+        }
+      ]
+    }
+  ],
+  "supported-platforms": {
+    "squares": [
+      "macOS"
+    ]
+  }
+}

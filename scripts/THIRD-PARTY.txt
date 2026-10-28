@@ -1,0 +1,16 @@
+MediaCRTV inclui as seguintes ferramentas de terceiros, sem modificação,
+em MediaCRTV.app/Contents/Resources/bin. Textos completos das licenças
+em Contents/Resources/Licenses.
+
+yt-dlp — The Unlicense (domínio público)
+  https://github.com/yt-dlp/yt-dlp
+
+deno — MIT License
+  https://github.com/denoland/deno
+
+FFmpeg (ffmpeg e ffprobe) — GNU General Public License v3
+  Build estático de Martin Riedl: https://ffmpeg.martin-riedl.de
+  Código-fonte do FFmpeg: https://ffmpeg.org/download.html
+  Scripts de build usados nesta distribuição: https://git.martin-riedl.de/ffmpeg/build-script
+  O código-fonte correspondente pode ser obtido nos links acima ou solicitado
+  a quem distribuiu este aplicativo.
