@@ -65,12 +65,12 @@ enum YTDLP {
     static var ffmpeg: String? { find("ffmpeg") }
     static var ffprobe: String? { find("ffprobe") }
 
-    /// Codec de vídeo do primeiro stream (ex.: "h264", "vp9", "av1"); nil sem vídeo ou sem ffprobe.
-    static func videoCodec(of file: URL) -> String? {
+    /// Codec do stream pedido (ex.: "h264", "vp9", "av1", "aac"); nil se não houver ou sem ffprobe.
+    static func codec(of file: URL, stream: String = "v:0") -> String? {
         guard let probe = ffprobe else { return nil }
         let p = Process()
         p.executableURL = URL(fileURLWithPath: probe)
-        p.arguments = ["-v", "error", "-select_streams", "v:0", "-show_entries", "stream=codec_name",
+        p.arguments = ["-v", "error", "-select_streams", stream, "-show_entries", "stream=codec_name",
                        "-of", "default=nw=1:nk=1", file.path]
         let out = Pipe()
         p.standardOutput = out
@@ -82,14 +82,16 @@ enum YTDLP {
         return codec.isEmpty ? nil : codec
     }
 
-    /// Converte para H.264 + AAC no mesmo container (x264 veryfast: ~2x mais rápido que o VideoToolbox no Apple Silicon). Progresso: `out_time_us` do ffmpeg.
-    static func h264ConvertArgs(input: URL, output: URL) -> [String] {
-        ["-hide_banner", "-nostdin", "-y", "-i", input.path,
-         "-map", "0:v:0", "-map", "0:a?",
-         "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-pix_fmt", "yuv420p", "-tag:v", "avc1",
-         "-c:a", "aac", "-b:a", "256k",
-         "-movflags", "+faststart",
-         "-progress", "pipe:1", "-nostats", output.path]
+    /// Ajuste final depois do yt-dlp. Vídeo: copia, ou H.264 com x264 veryfast (~2x mais rápido que o
+    /// VideoToolbox no Apple Silicon). Áudio: copia AAC, senão AAC 256k. Progresso: `out_time_us` do ffmpeg.
+    static func finalizeArgs(input: URL, output: URL, copyVideo: Bool, copyAudio: Bool) -> [String] {
+        let video = copyVideo
+            ? ["-c:v", "copy"]
+            : ["-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-pix_fmt", "yuv420p", "-tag:v", "avc1"]
+        let audio = copyAudio ? ["-c:a", "copy"] : ["-c:a", "aac", "-b:a", "256k"]
+        return ["-hide_banner", "-nostdin", "-y", "-i", input.path, "-map", "0:v:0", "-map", "0:a?"]
+            + video + audio
+            + ["-movflags", "+faststart", "-progress", "pipe:1", "-nostats", output.path]
     }
 
     static var environment: [String: String] {
@@ -171,7 +173,9 @@ enum YTDLP {
             if o.height == nil { sort.append("res") }
             if compat { sort.append("acodec:aac") }
             if !sort.isEmpty { a += ["-S", sort.joined(separator: ",")] }
-            a += ["--merge-output-format", o.container.rawValue, "--remux-video", o.container.rawValue]
+            // MOV não aceita VP9/AV1 (comum acima de 1080p): junta em MP4 e o DownloadJob passa para MOV no fim.
+            let muxer = o.container == .mov ? VideoContainer.mp4.rawValue : o.container.rawValue
+            a += ["--merge-output-format", muxer, "--remux-video", muxer]
         case .audio:
             a += ["-f", "ba/b", "-x", "--audio-format", o.audioFormat.rawValue]
             a += ["--audio-quality", o.audioFormat.isLossless ? "0" : "\(o.audioKbps)K"]
@@ -354,8 +358,8 @@ final class DownloadJob: Identifiable {
         process = nil
         if !buffer.isEmpty { handle(buffer); buffer = "" }
         if state == .cancelled { onFinish?(self); return }
-        if status == 0, needsH264Conversion, let f = fileURL {
-            convertToH264(f); return
+        if status == 0, let f = fileURL, let plan = finalizePlan(for: f) {
+            finalize(f, to: plan.output, copyVideo: plan.copyVideo, copyAudio: plan.copyAudio); return
         }
         if status == 0 {
             state = .done
@@ -371,24 +375,36 @@ final class DownloadJob: Identifiable {
         onFinish?(self)
     }
 
-    /// "Priorizar H.264" ligado mas o site só tinha VP9/AV1: converte para o Premiere abrir com imagem.
-    private var needsH264Conversion: Bool {
-        guard options.mode == .video, options.preferH264, options.container != .webm,
-              YTDLP.ffmpeg != nil, let f = fileURL, let codec = YTDLP.videoCodec(of: f) else { return false }
-        return codec != "h264"
+    /// O que falta depois do yt-dlp: H.264 para o Premiere (o site só tinha VP9/AV1) e/ou passar o MP4
+    /// provisório para MOV. nil = o arquivo já está pronto.
+    private func finalizePlan(for f: URL) -> (output: URL, copyVideo: Bool, copyAudio: Bool)? {
+        guard options.mode == .video, YTDLP.ffmpeg != nil else { return nil }
+        let wantsMov = options.container == .mov && f.pathExtension.lowercased() != "mov"
+        let wantsH264 = options.preferH264 && options.container != .webm
+        guard wantsMov || wantsH264, let video = YTDLP.codec(of: f) else { return nil }
+        let movFriendly: Set<String> = ["h264", "hevc", "prores", "mjpeg"]
+        let copyVideo = wantsH264 ? video == "h264" : movFriendly.contains(video)
+        if copyVideo && !wantsMov { return nil }
+        let audio = YTDLP.codec(of: f, stream: "a:0")
+        let output = wantsMov ? f.deletingPathExtension().appendingPathExtension("mov") : f
+        return (output, copyVideo, audio == nil || audio == "aac")
     }
 
-    private func convertToH264(_ input: URL) {
+    private func finalize(_ input: URL, to output: URL, copyVideo: Bool, copyAudio: Bool) {
         guard let ff = YTDLP.ffmpeg else { return }
+        let label = copyVideo ? "Ajustando para \(output.pathExtension.uppercased())…" : "Convertendo para H.264…"
+        let failure = copyVideo
+            ? "Baixado em \(input.pathExtension.uppercased()), mas não deu para passar para \(output.pathExtension.uppercased())"
+            : "Baixado, mas a conversão para H.264 falhou"
         state = .processing
         progress = 0
-        detail = "Convertendo para H.264…"
+        detail = label
         let duration = durationSeconds
-        let tmp = input.deletingLastPathComponent()
-            .appending(path: ".\(input.deletingPathExtension().lastPathComponent).h264.\(input.pathExtension)")
+        let tmp = output.deletingLastPathComponent()
+            .appending(path: ".\(output.deletingPathExtension().lastPathComponent).tmp.\(output.pathExtension)")
         let p = Process()
         p.executableURL = URL(fileURLWithPath: ff)
-        p.arguments = YTDLP.h264ConvertArgs(input: input, output: tmp)
+        p.arguments = YTDLP.finalizeArgs(input: input, output: tmp, copyVideo: copyVideo, copyAudio: copyAudio)
         p.standardInput = FileHandle.nullDevice
         let out = Pipe(), err = Pipe()
         p.standardOutput = out
@@ -400,7 +416,7 @@ final class DownloadJob: Identifiable {
                 for line in chunk.split(separator: "\n") where line.hasPrefix("out_time_us=") {
                     if let us = Double(line.dropFirst(12)) {
                         self.progress = min(us / 1_000_000 / duration, 1)
-                        self.detail = "Convertendo para H.264… \(Int(self.progress * 100))%"
+                        self.detail = "\(label) \(Int(self.progress * 100))%"
                     }
                 }
             }
@@ -419,27 +435,38 @@ final class DownloadJob: Identifiable {
                 let fm = FileManager.default
                 if self.state == .cancelled {
                     try? fm.removeItem(at: tmp)
-                } else if status == 0, (try? fm.replaceItemAt(input, withItemAt: tmp)) != nil {
+                } else if status == 0, Self.place(tmp, at: output, replacing: input) {
+                    self.fileURL = output
                     self.state = .done
                     self.progress = 1
-                    let size = (try? input.resourceValues(forKeys: [.fileSizeKey]).fileSize).flatMap { $0 }
-                    self.detail = [size.map { Fmt.bytes(Int64($0)) }, "\(input.pathExtension.uppercased()) · H.264"]
+                    let size = (try? output.resourceValues(forKeys: [.fileSizeKey]).fileSize).flatMap { $0 }
+                    self.detail = [size.map { Fmt.bytes(Int64($0)) }, output.pathExtension.uppercased(), copyVideo ? nil : "H.264"]
                         .compactMap { $0 }.joined(separator: " · ")
                 } else {
                     try? fm.removeItem(at: tmp)
-                    // Mantém o original: melhor um VP9/AV1 do que nada.
+                    // Mantém o original: melhor um VP9/AV1 ou um MP4 do que nada.
                     self.state = .done
                     self.progress = 1
-                    self.detail = "Baixado, mas a conversão para H.264 falhou"
+                    self.detail = failure
                 }
                 self.onFinish?(self)
             }
         }
         do { try p.run(); process = p } catch {
             state = .done
-            detail = "Baixado, mas a conversão para H.264 falhou"
+            detail = failure
             onFinish?(self)
         }
+    }
+
+    /// Põe o arquivo pronto no lugar final; o provisório do yt-dlp some.
+    private static func place(_ tmp: URL, at output: URL, replacing input: URL) -> Bool {
+        let fm = FileManager.default
+        if output == input { return (try? fm.replaceItemAt(input, withItemAt: tmp)) != nil }
+        try? fm.removeItem(at: output)
+        guard (try? fm.moveItem(at: tmp, to: output)) != nil else { return false }
+        try? fm.removeItem(at: input)
+        return true
     }
 
     private func fail(_ message: String) {
