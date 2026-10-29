@@ -1,12 +1,12 @@
 #!/bin/zsh
-# Compila e empacota SplitterCRTV.app em ./build.
+# Compila e empacota Music Split.app em ./build.
 # Uso: scripts/build-app.sh [--dev] [--install]
 #   --dev      não embute Python/modelos (usa engine/.venv do código-fonte); build rápido para testar a interface
 #   --install  copia para /Applications
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-APP=${APP:-build/SplitterCRTV.app}   # make-dmg usa build/full para não mexer no app de teste aberto
+APP="${APP:-build/Music Split.app}"   # make-dmg usa build/full para não mexer no app de teste aberto
 VERSION=1.0.0
 BUILD_NUMBER=1
 DEV=0
@@ -22,8 +22,8 @@ swift build -c release
 
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
-cp .build/release/SplitterCRTV "$APP/Contents/MacOS/SplitterCRTV"
-(( DEV )) || strip -S "$APP/Contents/MacOS/SplitterCRTV"  # tira caminhos de debug do binário
+cp .build/release/MusicSplit "$APP/Contents/MacOS/MusicSplit"
+(( DEV )) || strip -S "$APP/Contents/MacOS/MusicSplit"  # tira caminhos de debug do binário
 
 if [[ $DEV == 0 ]]; then
   # Ferramentas (scripts/fetch-tools.sh): ffmpeg, ffprobe, yt-dlp, deno — mantêm a assinatura dos autores.
@@ -83,10 +83,10 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>CFBundleName</key><string>SplitterCRTV</string>
-  <key>CFBundleDisplayName</key><string>SplitterCRTV</string>
-  <key>CFBundleIdentifier</key><string>com.lipenoe.splittercrtv</string>
-  <key>CFBundleExecutable</key><string>SplitterCRTV</string>
+  <key>CFBundleName</key><string>Music Split</string>
+  <key>CFBundleDisplayName</key><string>Music Split</string>
+  <key>CFBundleIdentifier</key><string>com.matheusazh.musicsplit</string>
+  <key>CFBundleExecutable</key><string>MusicSplit</string>
   <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>CFBundleIconName</key><string>AppIcon</string>
   <key>CFBundlePackageType</key><string>APPL</string>
@@ -122,7 +122,7 @@ codesign --force --sign - "$APP"
 echo "OK: $APP ($(du -sh "$APP" | cut -f1))"
 
 if [[ $INSTALL == 1 ]]; then
-  rm -rf /Applications/SplitterCRTV.app
-  ditto "$APP" /Applications/SplitterCRTV.app
-  echo "Instalado em /Applications/SplitterCRTV.app"
+  rm -rf "/Applications/Music Split.app"
+  ditto "$APP" "/Applications/Music Split.app"
+  echo "Instalado em /Applications/Music Split.app"
 fi

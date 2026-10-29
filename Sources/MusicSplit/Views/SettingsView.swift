@@ -168,7 +168,7 @@ private struct AboutSettings: View {
     var body: some View {
         VStack(spacing: 14) {
             PrismBadge(size: 84)
-            Text("SplitterCRTV").font(.system(size: 20, weight: .bold))
+            Text("Music Split").font(.system(size: 20, weight: .bold))
             Text("Versão \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "dev")")
                 .foregroundStyle(.secondary)
             Text("Separação por BS-RoFormer (viperx, SW por jarredou, karaokê por frazer e becruily), MelBand De-Reverb (anvuew), Demucs (Meta) via audio-separator; batidas por Beat This! (CPJKU); acordes por lv-chordia (Music X Lab); letra por Whisper (OpenAI) em MLX.")

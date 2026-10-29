@@ -1,13 +1,13 @@
 import AppKit
 import Observation
 
-/// Biblioteca em ~/Music/SplitterCRTV/Biblioteca/<id>/ com project.json, mix.flac, stems/ e peaks/.
+/// Biblioteca em ~/Music/Music Split/Biblioteca/<id>/ com project.json, mix.flac, stems/ e peaks/.
 @Observable
 final class LibraryStore {
     private(set) var projects: [Project] = []
 
     static let defaultRoot = FileManager.default.urls(for: .musicDirectory, in: .userDomainMask)[0]
-        .appending(path: "SplitterCRTV", directoryHint: .isDirectory)
+        .appending(path: "Music Split", directoryHint: .isDirectory)
 
     var root: URL {
         if let custom = UserDefaults.standard.string(forKey: "libraryPath"), !custom.isEmpty {
@@ -50,7 +50,7 @@ final class LibraryStore {
                 continue
             }
             do { loaded.append(try decoder.decode(Project.self, from: data)) } catch {
-                NSLog("SplitterCRTV: projeto ilegível em \(dir.path): \(error)")
+                NSLog("MusicSplit: projeto ilegível em \(dir.path): \(error)")
             }
         }
         projects = loaded.sorted { $0.createdAt > $1.createdAt }
@@ -77,7 +77,7 @@ final class LibraryStore {
             try FileManager.default.createDirectory(at: folder(for: project.id), withIntermediateDirectories: true)
             try encoder.encode(project).write(to: folder(for: project.id).appending(path: "project.json"), options: .atomic)
         } catch {
-            NSLog("SplitterCRTV: falha ao salvar projeto: \(error)")
+            NSLog("MusicSplit: falha ao salvar projeto: \(error)")
         }
         if let i = projects.firstIndex(where: { $0.id == project.id }) { projects[i] = project }
     }

@@ -1,5 +1,5 @@
-SplitterCRTV inclui software e modelos de terceiros. Textos completos das licenças
-em SplitterCRTV.app/Contents/Resources/Licenses.
+Music Split inclui software e modelos de terceiros. Textos completos das licenças
+em Music Split.app/Contents/Resources/Licenses.
 
 FERRAMENTAS (Contents/Resources/bin, sem modificação)
 yt-dlp — The Unlicense (domínio público) — https://github.com/yt-dlp/yt-dlp

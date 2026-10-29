@@ -1,26 +1,26 @@
 #!/bin/zsh
-# Gera build/SplitterCRTV-<versão>.dmg com o app completo (motor e modelos embutidos),
+# Gera build/Music-Split-<versão>.dmg com o app completo (motor e modelos embutidos),
 # atalho para Aplicativos, LEIA-ME e licenças. Uso: scripts/make-dmg.sh
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-export APP=build/full/SplitterCRTV.app
+export APP="build/full/Music Split.app"
 mkdir -p build/full
 scripts/build-app.sh
 
 VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "$APP/Contents/Info.plist")
 STAGE=build/dmg
-DMG=build/SplitterCRTV-${VERSION}.dmg
+DMG=build/Music-Split-${VERSION}.dmg
 
 rm -rf "$STAGE" "$DMG"
 mkdir -p "$STAGE"
-ditto "$APP" "$STAGE/SplitterCRTV.app"
+ditto "$APP" "$STAGE/Music Split.app"
 ln -s /Applications "$STAGE/Aplicativos"
 cp scripts/LEIA-ME.txt "$STAGE/LEIA-ME.txt"
 cp scripts/THIRD-PARTY.txt "$STAGE/Licenças de terceiros.txt"
 
 # ULFO (LZFSE): rápido e chega a ~1,6 GB; LZMA ganharia pouco (os modelos quase não comprimem) e leva 25 min
-hdiutil create -volname "SplitterCRTV" -srcfolder "$STAGE" -fs HFS+ -format ULFO -ov "$DMG" >/dev/null
+hdiutil create -volname "Music Split" -srcfolder "$STAGE" -fs HFS+ -format ULFO -ov "$DMG" >/dev/null
 rm -rf "$STAGE"
 codesign --force --sign - "$DMG"
 

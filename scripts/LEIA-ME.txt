@@ -1,4 +1,4 @@
-SplitterCRTV
+Music Split
 Separa voz e instrumentos de músicas (estilo Moises) e limpa a voz de falas,
 pregações e vídeos (estilo Adobe Podcast). Tudo roda no seu Mac, sem internet.
 Requer macOS 26 (Tahoe) ou mais novo e Mac com Apple Silicon (M1 ou mais novo).
@@ -11,12 +11,12 @@ bloqueia na primeira vez ("A Apple não pôde verificar..."). É esperado.
 1. Se o DMG foi bloqueado: clique OK, abra Ajustes do Sistema >
    Privacidade e Segurança, role até o fim e clique em "Abrir Mesmo Assim"
    ao lado do arquivo do DMG. Confirme com sua senha.
-2. Arraste SplitterCRTV para a pasta Aplicativos.
+2. Arraste Music Split para a pasta Aplicativos.
 3. Abra o app. Se bloquear de novo, repita o passo 1 (agora aparece
-   "SplitterCRTV").
+   "Music Split").
 
 Atalho pelo Terminal (libera tudo de uma vez, antes de abrir o DMG):
-   xattr -dr com.apple.quarantine ~/Downloads/SplitterCRTV-*.dmg
+   xattr -dr com.apple.quarantine ~/Downloads/Music-Split-*.dmg
 
 COMO USAR
 - Arraste um áudio, vídeo ou link (YouTube, Instagram, TikTok…) para a janela.

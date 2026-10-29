@@ -1,7 +1,7 @@
 [project]
 name = "splitter-engine"
 version = "0.1.0"
-description = "Motor de IA do SplitterCRTV: separação de faixas, limpeza de fala e análise musical"
+description = "Motor de IA do MusicSplit: separação de faixas, limpeza de fala e análise musical"
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "audio-separator[cpu]==0.47.0",

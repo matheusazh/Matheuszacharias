@@ -1,6 +1,6 @@
 """Onde ficam os modelos.
 
-SPLITTER_MODELS_DIR     pasta gravável (Application Support/SplitterCRTV/models)
+SPLITTER_MODELS_DIR     pasta gravável (Application Support/MusicSplit/models)
 SPLITTER_MODELS_BUNDLED pasta somente leitura dentro do .app (opcional)
 
 Os arquivos embutidos ganham links simbólicos na pasta gravável; assim o audio-separator
@@ -10,7 +10,7 @@ enxerga tudo num lugar só e o que for baixado depois (ex.: Whisper) cai na past
 import os
 from pathlib import Path
 
-MODELS_DIR = Path(os.environ.get("SPLITTER_MODELS_DIR", Path.home() / "Library/Application Support/SplitterCRTV/models"))
+MODELS_DIR = Path(os.environ.get("SPLITTER_MODELS_DIR", Path.home() / "Library/Application Support/MusicSplit/models"))
 BUNDLED_DIR = Path(os.environ["SPLITTER_MODELS_BUNDLED"]) if os.environ.get("SPLITTER_MODELS_BUNDLED") else None
 
 

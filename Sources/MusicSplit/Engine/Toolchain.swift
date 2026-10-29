@@ -6,9 +6,9 @@ import Foundation
 /// usa o venv de engine/ e as ferramentas do sistema.
 enum Toolchain {
     static let supportDir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        .appending(path: "SplitterCRTV", directoryHint: .isDirectory)
+        .appending(path: "MusicSplit", directoryHint: .isDirectory)
     static let logsDir = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask)[0]
-        .appending(path: "Logs/SplitterCRTV", directoryHint: .isDirectory)
+        .appending(path: "Logs/MusicSplit", directoryHint: .isDirectory)
     static let modelsDir = supportDir.appending(path: "models", directoryHint: .isDirectory)
     static let supportBin = supportDir.appending(path: "bin", directoryHint: .isDirectory)
 
@@ -19,7 +19,7 @@ enum Toolchain {
     static var bundledBin: URL? { existing(resources?.appending(path: "bin")) }
 
     /// Raiz do repositório quando rodando do código-fonte.
-    /// O app de teste fica em <repo>/build/SplitterCRTV.app; via `swift run`, vale a pasta atual.
+    /// O app de teste fica em <repo>/build/Music Split.app; via `swift run`, vale a pasta atual.
     /// (Sem #filePath, para não gravar o caminho da máquina no binário.)
     static let sourceRoot: URL = {
         let fromBundle = Bundle.main.bundleURL.deletingLastPathComponent().deletingLastPathComponent()

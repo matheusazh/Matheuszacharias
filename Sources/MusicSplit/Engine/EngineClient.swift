@@ -16,7 +16,7 @@ enum EngineError: LocalizedError {
         switch self {
         case .unavailable(let why): "Motor de IA indisponível: \(why)"
         case .failed(let message): message
-        case .crashed: "O motor de IA parou inesperadamente. Veja o log em ~/Library/Logs/SplitterCRTV."
+        case .crashed: "O motor de IA parou inesperadamente. Veja o log em ~/Library/Logs/MusicSplit."
         case .cancelled: "Cancelado."
         }
     }

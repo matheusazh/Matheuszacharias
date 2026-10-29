@@ -213,7 +213,7 @@ final class JobQueue {
                 } catch EngineError.cancelled {
                     throw CancellationError()
                 } catch {
-                    NSLog("SplitterCRTV: análise falhou: \(error)")   // as faixas continuam úteis sem análise
+                    NSLog("MusicSplit: análise falhou: \(error)")   // as faixas continuam úteis sem análise
                 }
             }
 

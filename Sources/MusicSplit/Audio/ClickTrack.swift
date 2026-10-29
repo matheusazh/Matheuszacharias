@@ -55,7 +55,7 @@ enum ClickTrack {
             try file.write(from: buffer)
             return url
         } catch {
-            NSLog("SplitterCRTV: falha ao gravar click: \(error)")
+            NSLog("MusicSplit: falha ao gravar click: \(error)")
             return nil
         }
     }

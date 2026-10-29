@@ -135,7 +135,7 @@ final class PlaybackEngine {
                 sampleRate = format.sampleRate
             } catch {
                 loadError = "Não consegui abrir \(s.url.lastPathComponent)."
-                NSLog("SplitterCRTV: \(error)")
+                NSLog("MusicSplit: \(error)")
             }
         }
         totalFrames = tracks.filter { $0.route != .click }.map(\.file.length).max() ?? 0

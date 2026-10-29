@@ -196,7 +196,7 @@ struct ExportSheet: View {
     }
 
     private var tempDir: URL {
-        let dir = FileManager.default.temporaryDirectory.appending(path: "SplitterCRTV-export-\(UUID().uuidString)")
+        let dir = FileManager.default.temporaryDirectory.appending(path: "MusicSplit-export-\(UUID().uuidString)")
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir
     }

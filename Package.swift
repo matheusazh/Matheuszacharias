@@ -2,12 +2,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "SplitterCRTV",
+    name: "MusicSplit",
     platforms: [.macOS("26.0")],
     targets: [
         .executableTarget(
-            name: "SplitterCRTV",
-            path: "Sources/SplitterCRTV",
+            name: "MusicSplit",
+            path: "Sources/MusicSplit",
             swiftSettings: [.swiftLanguageMode(.v5)]
         )
     ]

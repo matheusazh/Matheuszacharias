@@ -1,12 +1,12 @@
 import SwiftUI
 
 @main
-struct SplitterCRTVApp: App {
+struct MusicSplitApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
     @State private var model = AppModel()
 
     var body: some Scene {
-        Window("SplitterCRTV", id: "main") {
+        Window("Music Split", id: "main") {
             ContentView()
                 .environment(model)
                 .frame(minWidth: 960, minHeight: 620)

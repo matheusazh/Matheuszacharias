@@ -1,3 +1,3 @@
-"""Motor de IA do SplitterCRTV."""
+"""Motor de IA do MusicSplit."""
 
 __version__ = "0.1.0"

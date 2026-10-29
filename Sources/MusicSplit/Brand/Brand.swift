@@ -194,7 +194,7 @@ struct OpeningView: View {
                             .opacity(prism)
                     }
                     .padding(.bottom, 12)
-                Text("SplitterCRTV")
+                Text("Music Split")
                     .font(.system(size: 30, weight: .bold, design: .rounded))
                     .tracking(-0.4)
                     .opacity(title)
