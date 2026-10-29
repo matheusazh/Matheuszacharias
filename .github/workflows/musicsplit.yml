@@ -15,7 +15,8 @@ defaults:
 
 jobs:
   build:
-    runs-on: macos-26
+    # macos-15 tem mais máquinas livres que o macos-26 e já traz o Xcode 26 (SDK do macOS 26).
+    runs-on: macos-15
     timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
@@ -23,7 +24,8 @@ jobs:
       - name: Xcode 26 e uv
         run: |
           xcode=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
-          [[ -n "$xcode" ]] && sudo xcode-select -s "$xcode"
+          [[ -n "$xcode" ]] || { echo "::error::Xcode 26 não encontrado neste Mac: $(ls -d /Applications/Xcode*.app)"; exit 1; }
+          sudo xcode-select -s "$xcode"
           xcodebuild -version
           brew install uv
           df -h /
