@@ -1,11 +1,13 @@
 # Music Split
 
+Baseado no [SplitterCRTV](https://github.com/noahcrtv1/SplitterCRTV) de Noah CRTV. Novidade: o tom detectado pode ser corrigido à mão (clique no selo **Tom**).
+
 App nativo macOS (SwiftUI + Liquid Glass) para separar voz e instrumentos de músicas (estilo Moises)
 e limpar a voz de falas, pregações e vídeos (estilo Adobe Podcast). A IA roda toda no Mac, sem internet.
 
 ## Baixar (jeito fácil)
 
-Baixe o `.dmg` em **[Releases](https://github.com/noahcrtv1/Music Split/releases/latest)**, abra e arraste o Music Split para Aplicativos.
+Baixe o `.dmg` gerado pelo build do GitHub (aba **Actions** do repositório, artefato `Music-Split-dmg`), abra e arraste o Music Split para Aplicativos.
 Na primeira abertura, se o macOS bloquear: **Ajustes do Sistema ▸ Privacidade e Segurança ▸ Abrir Mesmo Assim**.
 
 Quer compilar você mesmo? Siga a seção abaixo.
@@ -22,10 +24,11 @@ Precisa de um Mac com Apple Silicon (M1 ou mais novo) e macOS 26 ou mais novo.
 2. Abra o app **Terminal** e rode:
 
 ```bash
-git clone https://github.com/noahcrtv1/Music Split.git
-cd Music Split
+git clone https://github.com/matheusazh/Matheuszacharias.git
+cd Matheuszacharias/MusicSplit
 scripts/fetch-tools.sh          # yt-dlp, deno e ffmpeg
 scripts/build-engine.sh         # Python embutido + dependências do motor
+(cd engine && uv sync --frozen)  # ambiente que o fetch-models usa
 scripts/fetch-models.sh         # modelos de IA (vários GB, demora)
 scripts/build-app.sh --install  # compila e instala em /Applications
 ```
@@ -35,7 +38,7 @@ O app aparece em **Aplicativos** como Music Split. 16 GB de memória recomendado
 3. Na primeira vez que abrir, o macOS pode bloquear (o app não é assinado pela Apple).
    Vá em **Ajustes do Sistema ▸ Privacidade e Segurança** e clique em **Abrir Mesmo Assim**.
 
-Para atualizar depois: `cd Music Split && git pull` e rode o último comando de novo.
+Para atualizar depois: `cd Matheuszacharias/MusicSplit && git pull` e rode o último comando de novo.
 
 ## Requisitos
 - macOS 26+ (testado no 27.2), Apple Silicon. 16 GB de memória recomendados.
@@ -47,7 +50,7 @@ scripts/fetch-tools.sh     # yt-dlp, deno e ffmpeg estáticos em vendor/bin (com
 scripts/build-engine.sh    # Python 3.12 relocável + dependências em vendor/python
 scripts/fetch-models.sh    # modelos em vendor/models (RoFormer em float16)
 scripts/build-app.sh       # build/Music Split.app completo (use --dev para testar a interface sem embutir o motor)
-scripts/make-dmg.sh        # build/Music Split-<versão>.dmg (app completo em build/full, LZFSE, ~1,6 GB — cabe no WhatsApp)
+scripts/make-dmg.sh        # build/Music-Split-<versão>.dmg (app completo em build/full, LZFSE, ~1,6 GB — cabe no WhatsApp)
 ```
 Com `--dev`, o app usa `engine/.venv` do código-fonte (`cd engine && uv sync`). Para apontar para uma pasta
 de modelos já baixados: `defaults write com.lipenoe.splittercrtv DevModelsPath <pasta>`.
@@ -57,7 +60,7 @@ Assinatura ad-hoc: em outro Mac, "Abrir Mesmo Assim" em Ajustes ▸ Privacidade 
 `Contents/Resources/{bin,python}` antes de subir o motor — sem isso o macOS mata o processo (código 137).
 
 ## Como funciona
-- **Swift** (`Sources/Music Split`): biblioteca, fila, player de faixas (AVAudioEngine com tom/velocidade,
+- **Swift** (`Sources/MusicSplit`): biblioteca, fila, player de faixas (AVAudioEngine com tom/velocidade,
   loop sem emenda, metrônomo e contagem), telas Música e Fala, exportação (renderização offline + ffmpeg).
 - **Motor** (`engine/splitter_engine`): processo Python falando JSON por linha no stdin/stdout.
   - `separate_music`: 2 faixas = BS-RoFormer viperx; 4/6 = BS-RoFormer SW; rápido = htdemucs; backing = RoFormer karaokê.
@@ -70,8 +73,8 @@ Assinatura ad-hoc: em outro Mac, "Abrir Mesmo Assim" em Ajustes ▸ Privacidade 
 
 ## Pastas
 - Biblioteca: `~/Music/Music Split/Biblioteca/<id>/` (project.json, mix.flac, stems/*.flac, peaks/, cache/)
-- Modelos baixados e caches: `~/Library/Application Support/Music Split/`
-- Log do motor: `~/Library/Logs/Music Split/engine.log`
+- Modelos baixados e caches: `~/Library/Application Support/MusicSplit/`
+- Log do motor: `~/Library/Logs/MusicSplit/engine.log`
 
 ## Atalhos
 espaço tocar/pausar · ← → 5 s (⇧ = 1 s) · I/O início/fim do loop · L loop · K metrônomo ·
