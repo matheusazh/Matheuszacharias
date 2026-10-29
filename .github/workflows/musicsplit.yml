@@ -1,0 +1,52 @@
+name: Music Split
+
+# Compila o Music Split completo (motor Python + modelos de IA embutidos) num Mac da nuvem
+# e publica o .dmg (~1,6 GB) como artefato do run.
+on:
+  push:
+    paths: ["MusicSplit/**", ".github/workflows/musicsplit.yml"]
+  pull_request:
+    paths: ["MusicSplit/**", ".github/workflows/musicsplit.yml"]
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: MusicSplit
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Xcode 26 e uv
+        run: |
+          xcode=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          [[ -n "$xcode" ]] && sudo xcode-select -s "$xcode"
+          xcodebuild -version
+          brew install uv
+          df -h /
+
+      - name: Ferramentas embutidas (yt-dlp, deno, ffmpeg)
+        run: scripts/fetch-tools.sh
+
+      - name: Python embutido do motor
+        run: scripts/build-engine.sh
+
+      - name: Modelos de IA
+        run: |
+          (cd engine && uv sync --frozen)
+          scripts/fetch-models.sh
+          rm -rf vendor/.models-cache engine/.venv
+          df -h /
+
+      - name: Compilar e gerar o DMG
+        run: scripts/make-dmg.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Music-Split-dmg
+          path: MusicSplit/build/*.dmg
+          if-no-files-found: error
+          compression-level: 0

@@ -9,7 +9,13 @@ DL=$VENDOR/downloads
 BIN=$VENDOR/bin
 mkdir -p "$DL" "$BIN" "$VENDOR/licenses"
 
-fetch() { echo "↓ $2"; curl -fL --progress-bar -o "$DL/$2" "$1"; }
+# Servidores de download às vezes demoram: tenta de novo antes de desistir.
+CURL=(curl -fL --retry 5 --retry-delay 5 --retry-all-errors --connect-timeout 30)
+# No GitHub Actions, a falha vira anotação dizendo qual download quebrou (dá para ver sem abrir o log).
+CURRENT=início
+[[ -n "${GITHUB_ACTIONS:-}" ]] && trap 'echo "::error::fetch-tools.sh falhou em: $CURRENT"' ZERR
+
+fetch() { CURRENT="$2 ($1)"; echo "↓ $2"; "${CURL[@]}" --progress-bar -o "$DL/$2" "$1"; }
 
 # yt-dlp (binário oficial universal) + checksum publicado no release
 fetch https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos yt-dlp_macos
@@ -33,9 +39,10 @@ cp "$DL/deno-LICENSE" "$VENDOR/licenses/deno.txt"
 
 # ffmpeg + ffprobe estáticos (build de Martin Riedl, GPL)
 for tool in ffmpeg; do
-  url=$(curl -fsL -r 0-0 -o /dev/null -w '%{url_effective}' "https://ffmpeg.martin-riedl.de/redirect/latest/macos/arm64/release/$tool.zip")
+  CURRENT="link do $tool em ffmpeg.martin-riedl.de"
+  url=$("${CURL[@]}" -s -r 0-0 -o /dev/null -w '%{url_effective}' "https://ffmpeg.martin-riedl.de/redirect/latest/macos/arm64/release/$tool.zip")
   fetch "$url" "$tool.zip"
-  expected=$(curl -fsL "$url.sha256" | awk '{print $1}')
+  expected=$("${CURL[@]}" -s "$url.sha256" | awk '{print $1}')
   actual=$(shasum -a 256 "$DL/$tool.zip" | awk '{print $1}')
   [[ "$expected" == "$actual" ]] || { echo "Checksum do $tool não confere"; exit 1; }
   unzip -oq "$DL/$tool.zip" -d "$DL/$tool" && install -m 755 "$DL/$tool/$tool" "$BIN/$tool"

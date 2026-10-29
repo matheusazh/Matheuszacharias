@@ -15,7 +15,7 @@ Atalhos: **⌘1** Baixar · **⌘2** Converter · **⇧⌘V** colar link · **�
 Precisa de um Mac com Apple Silicon (M1 ou mais novo), macOS 26+ e o **Xcode** instalado (abra uma vez e aceite a licença).
 
 ```bash
-cd Matheuszacharias
+cd Matheuszacharias/Downloader
 scripts/fetch-tools.sh          # baixa yt-dlp, deno, ffmpeg e ffprobe (com checksum)
 scripts/build-app.sh --install  # compila e instala em /Applications
 scripts/make-dmg.sh             # opcional: gera build/Downloader-<versão>.dmg
