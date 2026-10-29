@@ -432,7 +432,7 @@ private struct ChordLane: View {
     @AppStorage("simpleChords") private var simple = false
 
     var body: some View {
-        let flats = ChordFormatter.flats(for: project.analysis?.key, transpose: project.mix.pitch)
+        let flats = ChordFormatter.flats(for: project.key, transpose: project.mix.pitch)
         let duration = max(0.001, model.player.duration)
         ZStack {
             RoundedRectangle(cornerRadius: 6, style: .continuous).fill(.quaternary.opacity(0.25))

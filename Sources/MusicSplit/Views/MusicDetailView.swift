@@ -60,11 +60,8 @@ private struct MusicHeader: View {
                     .tracking(-0.3)
                     .lineLimit(1)
                 HStack(spacing: 6) {
-                    if let key = analysis?.key {
-                        InfoChip(symbol: "music.quarternote.3",
-                                 text: "Tom " + ChordFormatter.keyName(key, transpose: project.mix.pitch),
-                                 help: ChordFormatter.keyLongName(key, transpose: project.mix.pitch)
-                                    + (project.mix.pitch != 0 ? " (original: \(ChordFormatter.keyName(key)))" : ""))
+                    if project.key != nil || analysis != nil {
+                        KeyMenu(project: project)
                     }
                     if let bpm = analysis?.bpm {
                         let shown = bpm * project.mix.speed
@@ -88,6 +85,86 @@ private struct MusicHeader: View {
     }
 }
 
+/// Selo do tom com menu para corrigir quando o detector erra. As cifras passam a ser
+/// escritas no tom escolhido (sustenidos ou bemóis) e o controle de tom parte dele.
+private struct KeyMenu: View {
+    @Environment(AppModel.self) private var model
+    let project: Project
+
+    var body: some View {
+        let pitch = project.mix.pitch
+        let detected = project.analysis?.key
+        Menu {
+            if let detected {
+                Button {
+                    model.setKey(nil)
+                } label: {
+                    Label("Automático: \(ChordFormatter.keyLongName(detected)) (\(ChordFormatter.keyName(detected)))",
+                          systemImage: project.keyOverride == nil ? "checkmark" : "wand.and.stars")
+                }
+                Divider()
+            }
+            keyPicker("Tons maiores", minor: false)
+            keyPicker("Tons menores", minor: true)
+        } label: {
+            HStack(spacing: 5) {
+                Image(systemName: project.keyOverride == nil ? "music.quarternote.3" : "pencil")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(project.keyOverride == nil ? AnyShapeStyle(.secondary) : AnyShapeStyle(Color.accentColor))
+                Text(project.key.map { "Tom " + ChordFormatter.keyName($0, transpose: pitch) } ?? "Tom ?")
+                    .font(.system(size: 12, weight: .semibold).monospacedDigit())
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 8, weight: .bold))
+                    .foregroundStyle(.tertiary)
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(Capsule().fill(project.keyOverride == nil
+                ? AnyShapeStyle(.quaternary.opacity(0.6)) : AnyShapeStyle(Color.accentColor.opacity(0.18))))
+        }
+        .menuStyle(.button)
+        .buttonStyle(.plain)
+        .menuIndicator(.hidden)
+        .fixedSize()
+        .help(helpText)
+    }
+
+    private var helpText: String {
+        guard let key = project.key else { return "Tom não detectado. Clique para escolher." }
+        var text = ChordFormatter.keyLongName(key, transpose: project.mix.pitch)
+        if project.mix.pitch != 0 { text += " (original: \(ChordFormatter.keyName(key)))" }
+        if project.keyOverride != nil, let detected = project.analysis?.key {
+            text += "\nCorrigido por você. Detectado: \(ChordFormatter.keyName(detected))."
+        } else if let c = project.analysis?.key?.confidence, c < 0.05 {
+            text += "\nDetecção com pouca certeza: confira e corrija se precisar."
+        }
+        return text + "\nClique para corrigir o tom."
+    }
+
+    /// Lista de 12 tons; a marca fica no tom em uso.
+    private func keyPicker(_ title: String, minor: Bool) -> some View {
+        Menu(title) {
+            ForEach(0..<12, id: \.self) { pc in
+                let key = KeyInfo.manual(pitchClass: pc, minor: minor)
+                let selected = project.key.map { key.same(as: $0) } ?? false
+                Button {
+                    model.setKey(key)
+                } label: {
+                    if selected {
+                        Label(label(key), systemImage: "checkmark")
+                    } else {
+                        Text(label(key))
+                    }
+                }
+            }
+        }
+    }
+
+    private func label(_ key: KeyInfo) -> String {
+        "\(ChordFormatter.keyName(key)) · \(ChordFormatter.keyLongName(key))"
+    }
+}
+
 /// Acorde atual grande e o próximo, com a barra do tempo até a troca.
 private struct CurrentChordView: View {
     @Environment(AppModel.self) private var model
@@ -98,7 +175,7 @@ private struct CurrentChordView: View {
     var body: some View {
         TimelineView(.animation(minimumInterval: 1 / 30, paused: !model.player.isPlaying)) { _ in
             let t = model.scrubTime ?? model.player.displayTime()
-            let flats = ChordFormatter.flats(for: project.analysis?.key, transpose: project.mix.pitch)
+            let flats = ChordFormatter.flats(for: project.key, transpose: project.mix.pitch)
             let i = chords.lastIndex { $0.start <= t } ?? 0
             let current = chords.indices.contains(i) ? ChordFormatter.display(chords[i].label, transpose: project.mix.pitch, simple: simple, flats: flats) : nil
             let nextIndex = chords[(i + 1)...].firstIndex { ChordFormatter.parse($0.label) != nil && $0.label != chords[i].label }
@@ -241,7 +318,7 @@ private struct PitchControl: View {
                 Text(pitch == 0 ? "Tom" : (pitch > 0 ? "+\(pitch)" : "\(pitch)"))
                     .font(.system(size: 13, weight: .semibold).monospacedDigit())
                     .contentTransition(.numericText(value: Double(pitch)))
-                if let key = project.analysis?.key {
+                if let key = project.key {
                     Text(ChordFormatter.keyName(key, transpose: pitch))
                         .font(.system(size: 10, weight: .medium))
                         .foregroundStyle(.secondary)

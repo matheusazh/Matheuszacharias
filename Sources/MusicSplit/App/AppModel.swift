@@ -255,6 +255,14 @@ final class AppModel {
         scheduleSave(p.id)
     }
 
+    /// Corrige o tom da música atual; nil (ou o próprio detectado) volta para o automático.
+    func setKey(_ key: KeyInfo?) {
+        guard let project = currentProject else { return }
+        let detected = project.analysis?.key
+        let override = key.flatMap { k in detected.map { k.same(as: $0) } == true ? nil : k }
+        library.update(project.id) { $0.keyOverride = override }
+    }
+
     func updateProject(_ id: UUID, _ change: (inout Project) -> Void) {
         library.update(id, change)
     }

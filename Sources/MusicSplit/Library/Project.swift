@@ -56,6 +56,17 @@ struct KeyInfo: Codable, Hashable {
     var mode: String       // "major" | "minor"
     var pitchClass: Int
     var confidence: Double
+
+    var isMinor: Bool { mode == "minor" }
+
+    /// Tom escolhido à mão (correção do detectado).
+    static func manual(pitchClass: Int, minor: Bool) -> KeyInfo {
+        let pc = (pitchClass % 12 + 12) % 12
+        let tonic = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"][pc]
+        return KeyInfo(tonic: tonic, mode: minor ? "minor" : "major", pitchClass: pc, confidence: 1)
+    }
+
+    func same(as other: KeyInfo) -> Bool { pitchClass == other.pitchClass && mode == other.mode }
 }
 
 struct Analysis: Codable {
@@ -138,11 +149,16 @@ struct Project: Codable, Identifiable {
     var stems: [StemInfo]
     var loudness: [String: Double] = [:]
     var analysis: Analysis?
+    /// Tom corrigido pelo usuário; nil = usa o detectado. Sobrevive a uma nova análise.
+    var keyOverride: KeyInfo?
     var lyrics: [LyricLine]?
     var mix = MixState()
     var speech = SpeechState()
 
     var hasVideo: Bool { videoPath != nil }
+
+    /// Tom em uso: o corrigido pelo usuário ou o detectado.
+    var key: KeyInfo? { keyOverride ?? analysis?.key }
 
     var subtitle: String {
         let time = Formatters.duration(duration)
