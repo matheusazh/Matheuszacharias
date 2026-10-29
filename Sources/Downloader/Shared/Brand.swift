@@ -128,13 +128,13 @@ struct Wordmark: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            Text("Media").fontWeight(.semibold)
-            Text("CRTV").fontWeight(.heavy).foregroundStyle(Brand.gradient)
+            Text("Down").fontWeight(.semibold)
+            Text("loader").fontWeight(.heavy).foregroundStyle(Brand.gradient)
         }
         .font(.system(size: size))
         .tracking(-0.02 * size)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("MediaCRTV")
+        .accessibilityLabel("Downloader")
     }
 }
 
@@ -188,7 +188,7 @@ struct SplashView: View {
         .contentShape(.rect)
         .onTapGesture(perform: skip)
         .task { await run() }
-        .accessibilityLabel("Abrindo MediaCRTV")
+        .accessibilityLabel("Abrindo Downloader")
     }
 
     private func wait(_ seconds: Double) async -> Bool {

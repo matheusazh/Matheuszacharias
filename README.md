@@ -1,4 +1,4 @@
-# MediaCRTV
+# Downloader
 
 App nativo macOS (SwiftUI + Liquid Glass) que junta o **DownloaderCRTV** e o **ConverterCRTV** num programa só:
 
@@ -15,10 +15,10 @@ Atalhos: **⌘1** Baixar · **⌘2** Converter · **⇧⌘V** colar link · **�
 Precisa de um Mac com Apple Silicon (M1 ou mais novo), macOS 26+ e o **Xcode** instalado (abra uma vez e aceite a licença).
 
 ```bash
-cd MediaCRTV
+cd Matheuszacharias
 scripts/fetch-tools.sh          # baixa yt-dlp, deno, ffmpeg e ffprobe (com checksum)
 scripts/build-app.sh --install  # compila e instala em /Applications
-scripts/make-dmg.sh             # opcional: gera build/MediaCRTV-<versão>.dmg
+scripts/make-dmg.sh             # opcional: gera build/Downloader-<versão>.dmg
 ```
 
 Na primeira abertura, se o macOS bloquear: **Ajustes do Sistema ▸ Privacidade e Segurança ▸ Abrir Mesmo Assim**.
@@ -26,8 +26,8 @@ Na primeira abertura, se o macOS bloquear: **Ajustes do Sistema ▸ Privacidade 
 ## Estrutura
 
 ```
-Sources/MediaCRTV/
-  App/         janela, abas, menus, serviços do Finder (MediaCRTVApp, RootView)
+Sources/Downloader/
+  App/         janela, abas, menus, serviços do Finder (DownloaderApp, RootView)
   Shared/      marca, símbolo e animação de abertura
   Downloader/  yt-dlp: modelos, motor, telas (vindo do DownloaderCRTV)
   Converter/   ffmpeg: análise, presets, fila, tela (vindo do ConverterCRTV)

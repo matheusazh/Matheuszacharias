@@ -6,13 +6,13 @@ import SwiftUI
 
 enum YTDLP {
     /// Ferramentas instaladas no sistema (Homebrew etc.) têm prioridade.
-    /// Diagnóstico: `defaults write com.lipenoe.mediacrtv ForceBundledTools -bool YES` simula um Mac sem Homebrew.
+    /// Diagnóstico: `defaults write com.matheusazh.downloader ForceBundledTools -bool YES` simula um Mac sem Homebrew.
     static let systemDirs = UserDefaults.standard.bool(forKey: "ForceBundledTools")
         ? [] : ["/opt/homebrew/bin", "/usr/local/bin", NSHomeDirectory() + "/.local/bin", "/usr/bin"]
 
     /// Cópia do yt-dlp que o app mantém e atualiza (o bundle não deve ser modificado).
     static let supportBin = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        .appending(path: "MediaCRTV/bin", directoryHint: .isDirectory)
+        .appending(path: "Downloader/bin", directoryHint: .isDirectory)
 
     /// ffmpeg, ffprobe, deno e yt-dlp embutidos no app (Contents/Resources/bin).
     static let bundledBin = Bundle.main.resourceURL?.appending(path: "bin", directoryHint: .isDirectory)
@@ -49,7 +49,7 @@ enum YTDLP {
             removeQuarantine(target.path)
             try bundledVersion.write(to: stamp, atomically: true, encoding: .utf8)
         } catch {
-            NSLog("MediaCRTV: falha ao preparar yt-dlp: \(error)")
+            NSLog("Downloader: falha ao preparar yt-dlp: \(error)")
         }
     }
 
@@ -194,7 +194,7 @@ enum YTDLP {
             return "Esse site não é suportado ou o link não tem vídeo."
         }
         if msg.contains("403") || msg.localizedCaseInsensitiveContains("Forbidden") || msg.localizedCaseInsensitiveContains("Sign in to confirm") {
-            msg += "\nDica: o site mudou algo — use MediaCRTV ▸ Atualizar yt-dlp e tente de novo."
+            msg += "\nDica: o site mudou algo — use Downloader ▸ Atualizar yt-dlp e tente de novo."
         } else if ["login", "cookies", "authentication", "log in", "sign in"].contains(where: { msg.localizedCaseInsensitiveContains($0) }) {
             msg += "\nDica: escolha um navegador logado em “Cookies” no rodapé."
         }

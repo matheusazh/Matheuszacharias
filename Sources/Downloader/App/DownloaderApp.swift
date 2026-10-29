@@ -1,12 +1,12 @@
 import SwiftUI
 
 @main
-struct MediaCRTVApp: App {
+struct DownloaderApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
 
     var body: some Scene {
         let app = delegate.app
-        Window("MediaCRTV", id: "main") {
+        Window("Downloader", id: "main") {
             RootView()
                 .environment(app)
                 .environment(app.downloads)

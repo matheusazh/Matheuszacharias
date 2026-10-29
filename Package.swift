@@ -2,12 +2,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "MediaCRTV",
+    name: "Downloader",
     platforms: [.macOS("26.0")],
     targets: [
         .executableTarget(
-            name: "MediaCRTV",
-            path: "Sources/MediaCRTV",
+            name: "Downloader",
+            path: "Sources/Downloader",
             swiftSettings: [.swiftLanguageMode(.v5)]
         )
     ]

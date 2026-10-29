@@ -1,17 +1,17 @@
 #!/bin/zsh
-# Compila e empacota MediaCRTV.app em ./build. Uso: scripts/build-app.sh [--install]
+# Compila e empacota Downloader.app em ./build. Uso: scripts/build-app.sh [--install]
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-APP=build/MediaCRTV.app
+APP=build/Downloader.app
 VERSION=1.0.0
 
 swift build -c release
 
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
-cp .build/release/MediaCRTV "$APP/Contents/MacOS/MediaCRTV"
-strip -S "$APP/Contents/MacOS/MediaCRTV"  # tira caminhos de debug do binário
+cp .build/release/Downloader "$APP/Contents/MacOS/Downloader"
+strip -S "$APP/Contents/MacOS/Downloader"  # tira caminhos de debug do binário
 
 # Ferramentas embutidas (scripts/fetch-tools.sh). Mantêm a assinatura original dos autores.
 if [[ -d vendor/bin ]]; then
@@ -37,7 +37,7 @@ if xcrun --find actool >/dev/null 2>&1 && [[ -d Resources/AppIcon.icon ]]; then
   cp build/actool/Assets.car "$APP/Contents/Resources/"
   cp build/actool/AppIcon.icns "$APP/Contents/Resources/"
 else
-  ICONSET=build/MediaCRTV.iconset
+  ICONSET=build/Downloader.iconset
   swift scripts/make-icon.swift build/icon.png
   rm -rf "$ICONSET" && mkdir -p "$ICONSET"
   for s in 16 32 128 256 512; do
@@ -55,7 +55,7 @@ service() {
       <key>NSMenuItem</key><dict><key>default</key><string>$1</string></dict>
       <key>NSMessage</key><string>convertFiles</string>
       <key>NSUserData</key><string>$2</string>
-      <key>NSPortName</key><string>MediaCRTV</string>
+      <key>NSPortName</key><string>Downloader</string>
       <key>NSRequiredContext</key><dict/>
       <key>NSSendFileTypes</key><array><string>public.movie</string><string>public.audio</string></array>
     </dict>
@@ -67,10 +67,10 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>CFBundleName</key><string>MediaCRTV</string>
-  <key>CFBundleDisplayName</key><string>MediaCRTV</string>
-  <key>CFBundleIdentifier</key><string>com.lipenoe.mediacrtv</string>
-  <key>CFBundleExecutable</key><string>MediaCRTV</string>
+  <key>CFBundleName</key><string>Downloader</string>
+  <key>CFBundleDisplayName</key><string>Downloader</string>
+  <key>CFBundleIdentifier</key><string>com.matheusazh.downloader</string>
+  <key>CFBundleExecutable</key><string>Downloader</string>
   <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>CFBundleIconName</key><string>AppIcon</string>
   <key>CFBundlePackageType</key><string>APPL</string>
@@ -105,10 +105,10 @@ codesign --force --sign - "$APP"
 echo "OK: $APP"
 
 if [[ "${1:-}" == "--install" ]]; then
-  pkill -x MediaCRTV || true
-  rm -rf /Applications/MediaCRTV.app
+  pkill -x Downloader || true
+  rm -rf /Applications/Downloader.app
   cp -R "$APP" /Applications/
-  /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f /Applications/MediaCRTV.app
+  /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f /Applications/Downloader.app
   /System/Library/CoreServices/pbs -update 2>/dev/null || true
-  echo "Instalado em /Applications/MediaCRTV.app"
+  echo "Instalado em /Applications/Downloader.app"
 fi

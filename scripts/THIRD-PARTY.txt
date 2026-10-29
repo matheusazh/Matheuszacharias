@@ -1,5 +1,5 @@
-MediaCRTV inclui as seguintes ferramentas de terceiros, sem modificação,
-em MediaCRTV.app/Contents/Resources/bin. Textos completos das licenças
+Downloader inclui as seguintes ferramentas de terceiros, sem modificação,
+em Downloader.app/Contents/Resources/bin. Textos completos das licenças
 em Contents/Resources/Licenses.
 
 yt-dlp — The Unlicense (domínio público)

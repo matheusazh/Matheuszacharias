@@ -1,6 +1,6 @@
 name: macOS
 
-# Compila o MediaCRTV num Mac da nuvem e publica o .dmg como artefato do run.
+# Compila o Downloader num Mac da nuvem e publica o .dmg como artefato do run.
 on:
   push:
   pull_request:
@@ -28,6 +28,6 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: MediaCRTV-dmg
+          name: Downloader-dmg
           path: build/*.dmg
           if-no-files-found: error

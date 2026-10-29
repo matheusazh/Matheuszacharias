@@ -1,4 +1,4 @@
-MediaCRTV
+Downloader
 Baixe vídeos e áudios do YouTube, Instagram, TikTok, X e centenas de outros
 sites, e converta vídeos para abrirem no Premiere com imagem e som.
 Requer macOS 26 (Tahoe) ou mais novo.
@@ -9,10 +9,10 @@ bloqueia na primeira vez ("A Apple não pôde verificar..."). É esperado.
 
 1. Se o DMG foi bloqueado: clique OK, abra Ajustes do Sistema >
    Privacidade e Segurança, role até o fim e clique em "Abrir Mesmo Assim"
-   ao lado do MediaCRTV.dmg. Confirme com sua senha.
-2. Arraste MediaCRTV para a pasta Aplicativos.
+   ao lado do Downloader.dmg. Confirme com sua senha.
+2. Arraste Downloader para a pasta Aplicativos.
 3. Abra o app. Se bloquear de novo, repita o passo 1 (agora aparece
-   "MediaCRTV").
+   "Downloader").
 
 FERRAMENTAS
 O app já vem com tudo o que precisa (yt-dlp, ffmpeg e deno) para Macs com
@@ -23,7 +23,7 @@ DICAS
 - Aba Baixar: cole ou arraste o link. Posts privados (comum no Instagram):
   no rodapé, em "Sem login", escolha um navegador em que você esteja logado.
 - Se o YouTube começar a falhar (erro 403), use o menu
-  MediaCRTV > Atualizar yt-dlp.
+  Downloader > Atualizar yt-dlp.
 - Aba Converter: arraste vídeos ou pastas. No Finder também dá: botão
   direito > Serviços > Converter p/ Premiere. Se não aparecer, ative em
   Ajustes do Sistema > Teclado > Atalhos de Teclado > Serviços.
