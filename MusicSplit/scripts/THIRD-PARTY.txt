@@ -1,0 +1,35 @@
+Music Split inclui software e modelos de terceiros. Textos completos das licenças
+em Music Split.app/Contents/Resources/Licenses.
+
+FERRAMENTAS (Contents/Resources/bin, sem modificação)
+yt-dlp — The Unlicense (domínio público) — https://github.com/yt-dlp/yt-dlp
+deno — MIT License — https://github.com/denoland/deno
+FFmpeg — GNU General Public License v3
+  Build estático de Martin Riedl: https://ffmpeg.martin-riedl.de
+  Código-fonte do FFmpeg: https://ffmpeg.org/download.html
+  O código-fonte correspondente pode ser obtido nos links acima ou solicitado
+  a quem distribuiu este aplicativo.
+
+MOTOR DE IA (Contents/Resources/python)
+Python (python-build-standalone) — PSF License — https://github.com/astral-sh/python-build-standalone
+PyTorch — BSD-3-Clause — https://pytorch.org
+audio-separator — MIT — https://github.com/karaokenerds/python-audio-separator
+Beat This! — MIT — https://github.com/CPJKU/beat_this
+lv-chordia (ISMIR 2019, Music X Lab) — MIT — https://github.com/music-x-lab/ISMIR2019-Large-Vocabulary-Chord-Recognition
+mlx / mlx-whisper — MIT — https://github.com/ml-explore
+librosa — ISC · NumPy/SciPy — BSD · scikit-learn — BSD · pyloudnorm — MIT
+e as demais dependências listadas em engine/uv.lock, cada uma com sua licença.
+
+MODELOS (Contents/Resources/models; RoFormer convertidos para float16)
+BS-RoFormer viperx 1297 (voz × instrumental) — por viperx, via UVR
+BS-RoFormer SW (6 faixas) — por jarredou
+BS-RoFormer Karaoke — por frazer e becruily
+MelBand RoFormer De-Reverb — por anvuew
+UVR-DeNoise-Lite — por FoxJoy, via Ultimate Vocal Remover (Anjok07)
+HTDemucs — Meta AI (MIT) — https://github.com/facebookresearch/demucs
+Beat This! final0 — CPJKU (MIT)
+Whisper large-v3-turbo (baixado sob demanda) — OpenAI (MIT), versão MLX da mlx-community
+
+Os modelos da comunidade UVR são distribuídos publicamente pelos autores; o uso
+aqui é pessoal e sem fins comerciais. Para uso comercial, confira a licença de
+cada modelo com o autor.

@@ -1,0 +1,75 @@
+{
+  "fill": {
+    "solid": "extended-srgb:0.00000,0.00000,0.00000,1.00000"
+  },
+  "groups": [
+    {
+      "layers": [
+        {
+          "glass": true,
+          "image-name": "prism.svg",
+          "name": "prism"
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.45
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.45
+      }
+    },
+    {
+      "layers": [
+        {
+          "glass": true,
+          "image-name": "wave.svg",
+          "name": "wave"
+        },
+        {
+          "glass": true,
+          "image-name": "band0.svg",
+          "name": "band0"
+        },
+        {
+          "glass": true,
+          "image-name": "band1.svg",
+          "name": "band1"
+        },
+        {
+          "glass": true,
+          "image-name": "band2.svg",
+          "name": "band2"
+        },
+        {
+          "glass": true,
+          "image-name": "band3.svg",
+          "name": "band3"
+        }
+      ],
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.6
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.15
+      }
+    },
+    {
+      "layers": [
+        {
+          "glass": false,
+          "image-name": "background.svg",
+          "name": "background"
+        }
+      ]
+    }
+  ],
+  "supported-platforms": {
+    "squares": [
+      "macOS"
+    ]
+  }
+}

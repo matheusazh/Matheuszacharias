@@ -1,0 +1,37 @@
+Music Split
+Separa voz e instrumentos de músicas (estilo Moises) e limpa a voz de falas,
+pregações e vídeos (estilo Adobe Podcast). Tudo roda no seu Mac, sem internet.
+Requer macOS 26 (Tahoe) ou mais novo e Mac com Apple Silicon (M1 ou mais novo).
+Recomendado: 16 GB de memória. Com 8 GB funciona, só que mais devagar.
+
+INSTALAR
+O app não passa pela App Store nem pela notarização da Apple, então o macOS
+bloqueia na primeira vez ("A Apple não pôde verificar..."). É esperado.
+
+1. Se o DMG foi bloqueado: clique OK, abra Ajustes do Sistema >
+   Privacidade e Segurança, role até o fim e clique em "Abrir Mesmo Assim"
+   ao lado do arquivo do DMG. Confirme com sua senha.
+2. Arraste Music Split para a pasta Aplicativos.
+3. Abra o app. Se bloquear de novo, repita o passo 1 (agora aparece
+   "Music Split").
+
+Atalho pelo Terminal (libera tudo de uma vez, antes de abrir o DMG):
+   xattr -dr com.apple.quarantine ~/Downloads/Music-Split-*.dmg
+
+COMO USAR
+- Arraste um áudio, vídeo ou link (YouTube, Instagram, TikTok…) para a janela.
+- Escolha Música (separar faixas) ou Fala (limpar a voz). O app sugere sozinho.
+- Música: mixer com volume, mudo e solo; tom e velocidade; acordes, BPM e tom;
+  loop A-B (arraste na régua ou clique numa parte); metrônomo com contagem;
+  letra sincronizada (baixa um modelo de ~1,5 GB na primeira vez).
+- Fala: compare antes/depois (tecla B), ajuste a limpeza e a trilha de fundo,
+  escolha o volume final (-16 LUFS podcast, -14 LUFS redes) e exporte o áudio
+  ou o vídeo com o áudio novo.
+
+ATALHOS
+espaço tocar/pausar · ← → 5 s · I/O início e fim do loop · L loop
+K metrônomo · [ ] velocidade · ⌘↑ ⌘↓ tom · B antes/depois (fala)
+
+TEMPO (Mac M5)
+Música de 4 min: ~1 min (voz + instrumental, qualidade máxima),
+~40 s (4 ou 6 faixas), ~15 s (qualidade rápida).
